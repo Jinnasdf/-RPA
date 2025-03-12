@@ -3,35 +3,35 @@ name: Deploy to Cloud Run
 on:
   push:
     branches:
-      - main  # main 브랜치에 코드 푸시할 때 실행됨
+      - main   # main 브랜치에 Push될 때 실행 (원하는 브랜치 변경 가능)
+  schedule:
+    - cron: "0 9 * * *"  # 매일 오전 9시에 자동 실행 (UTC 기준, 한국 시간 18:00)
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: GitHub Repository Checkout
+        uses: actions/checkout@v4
 
       - name: Authenticate with Google Cloud
-        uses: google-github-actions/auth@v1
+        uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      - name: Set up Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v1
-        with:
-          project_id: autopython-452704
-
-      - name: Build and Push Docker Image
+      - name: Configure Docker & Authenticate Artifact Registry
         run: |
-          gcloud auth configure-docker
-          docker build -t gcr.io/autopython-452704/my-container .
-          docker push gcr.io/autopython-452704/my-container
+          gcloud auth configure-docker asia-northeast3-docker.pkg.dev
+
+      - name: Build & Push Docker Image
+        run: |
+          gcloud builds submit --tag asia-northeast3-docker.pkg.dev/autopython-452704/cloud-run-repo/my-container
 
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy my-container \
-            --image=gcr.io/autopython-452704/my-container \
-            --region=asia-northeast3 \
+            --image=asia-northeast3-docker.pkg.dev/autopython-452704/cloud-run-repo/my-container \
             --platform=managed \
+            --region=asia-northeast3 \
             --allow-unauthenticated
