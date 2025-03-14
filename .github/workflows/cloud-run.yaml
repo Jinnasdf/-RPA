@@ -5,7 +5,7 @@ on:
     branches:
       - main   # main 브랜치에 Push될 때 실행 (원하는 브랜치 변경 가능)
   schedule:
-    - cron: "0 23 * * *"  # 매일 오전 8시 자동 실행 (UTC 기준, 한국 시간 08:00)
+    - cron: "15 1 * * *"  # 매일 오전 10시 15분 자동 실행 (UTC 기준), 한국 시간 10:15
   workflow_dispatch:  # 이 줄 추가!
 
 jobs:
