@@ -9,6 +9,17 @@ from pykrx import stock
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+import logging
+import sys
+
+logging.basicConfig(
+    stream=sys.stdout,
+    level=logging.INFO,
+    format="[%(asctime)s] %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+)
+
+logging.info("앱 초기화 시작")
 
 
 print("✅ Cloud Run 자동 실행 시작!")
